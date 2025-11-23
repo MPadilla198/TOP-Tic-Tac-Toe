@@ -1,3 +1,7 @@
+:root {
+    --graphite: #474A51;
+}
+
 body {
     background-color: #EEEEEE;
 }
@@ -22,7 +26,7 @@ h1 {
     align-content: center;
 
     gap: 8px;
-    background-color: #444444;
+    background-color: var(--graphite);
 }
 
 .tile {
@@ -36,5 +40,5 @@ h1 {
 
     font-weight: 900;
     font-size: 16vh;
-    color: #444444;
+    color: var(--graphite);
 }
