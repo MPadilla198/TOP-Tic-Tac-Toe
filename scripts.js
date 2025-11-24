@@ -79,6 +79,7 @@ const gameboard = (() => {
         if (winner === null) {
             if (hasNoMoves()) {
                 console.log('The game is a tie!')
+                displayController.announceEnd('');
                 hasWinner = true;
             } else {
                 // if no one has won yet and there exists more moves to play
@@ -86,7 +87,8 @@ const gameboard = (() => {
                 swapCurrentPlayer();
             }
         } else {
-            console.log(`${winner} is the new winner!`)
+            console.log(`${winner} is the new winner!`);
+            displayController.announceEnd(winner);
             hasWinner = true;
         }
     }
@@ -133,7 +135,34 @@ const displayController = (() => {
         for (const tile of tiles) {
             tile.textContent = '';
         }
+
+        resetResultDisplay();
     }
 
-    return { setTile, clearTiles };
+    // Results display
+    function announceEnd(winner) {
+        const resultDisplay = document.querySelector('.result-display');
+        if (winner === 'X') {
+            const xName = document.querySelector('#player-x-name-input').value.trim();
+            if (xName !== '') {
+                winner = xName;
+            }
+        } else if (winner === 'O') {
+            const oName = document.querySelector('#player-o-name-input').value.trim();
+            if (oName !== '') {
+                winner = oName;
+            }
+        } else { // winner === '', its a tie
+            resultDisplay.textContent = 'It\'s a tie! Better luck next time!';
+            return;
+        }
+
+        resultDisplay.textContent = `${winner} is the winner! Congrats!`;
+    }
+
+    function resetResultDisplay() {
+        document.querySelector('.result-display').textContent = '';
+    }
+
+    return { setTile, clearTiles, announceEnd };
 })();
