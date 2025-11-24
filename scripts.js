@@ -1,4 +1,10 @@
 const gameboard = (() => {
+    // Tracks the number of moves taken
+    let movesMade = 0;
+    const incrementMoves = () => { movesMade++; };
+    const resetMoves = () => { movesMade = 0; };
+    const hasNoMoves = () => movesMade === 9;
+
     // Tracks whether a game has been won
     let hasWinner = false;
 
@@ -66,11 +72,19 @@ const gameboard = (() => {
         tiles[index] = currentPlayer;
         displayController.setTile(index, currentPlayer);
 
+        incrementMoves();
+
         // Check if there is a winner
         const winner = hasWon();
         if (winner === null) {
-            // Update the current player, if no one has won yet
-            swapCurrentPlayer();
+            if (hasNoMoves()) {
+                console.log('The game is a tie!')
+                hasWinner = true;
+            } else {
+                // if no one has won yet and there exists more moves to play
+                // Update the current player
+                swapCurrentPlayer();
+            }
         } else {
             console.log(`${winner} is the new winner!`)
             hasWinner = true;
@@ -80,6 +94,9 @@ const gameboard = (() => {
     function clearTiles() {
         // reset winner
         hasWinner = false;
+
+        // Reset number of moves made
+        resetMoves();
 
         // reset board and display tiles
         tiles.fill('');
