@@ -13,6 +13,9 @@ const gameboard = (() => {
     const swapCurrentPlayer = () => {
         currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
     }
+    const resetCurrentPlayer = () => {
+        currentPlayer = 'X';
+    }
 
     const tiles = new Array(9).fill('');
 
@@ -78,7 +81,6 @@ const gameboard = (() => {
         const winner = hasWon();
         if (winner === null) {
             if (hasNoMoves()) {
-                console.log('The game is a tie!')
                 displayController.announceEnd('');
                 hasWinner = true;
             } else {
@@ -87,7 +89,6 @@ const gameboard = (() => {
                 swapCurrentPlayer();
             }
         } else {
-            console.log(`${winner} is the new winner!`);
             displayController.announceEnd(winner);
             hasWinner = true;
         }
@@ -96,6 +97,9 @@ const gameboard = (() => {
     function clearTiles() {
         // reset winner
         hasWinner = false;
+
+        // reset current Player
+        resetCurrentPlayer();
 
         // Reset number of moves made
         resetMoves();
@@ -153,16 +157,23 @@ const displayController = (() => {
                 winner = oName;
             }
         } else { // winner === '', its a tie
+            console.log('The game is a tie!')
             resultDisplay.textContent = 'It\'s a tie! Better luck next time!';
             return;
         }
 
+        console.log(`${winner} is the new winner!`);
         resultDisplay.textContent = `${winner} is the winner! Congrats!`;
     }
 
     function resetResultDisplay() {
         document.querySelector('.result-display').textContent = '';
     }
+
+    // Restart Game Button
+    document.querySelector('#restart-game-button').addEventListener('click', () => {
+        gameboard.clearTiles();
+    });
 
     return { setTile, clearTiles, announceEnd };
 })();
