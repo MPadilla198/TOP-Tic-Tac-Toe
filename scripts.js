@@ -1,8 +1,97 @@
-let hasWinner = false;
+const gameboard = (() => {
+    // Tracks whether a game has been won
+    let hasWinner = false;
+
+    // Current Player methods
+    let currentPlayer = 'X';
+    const swapCurrentPlayer = () => {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    }
+
+    const tiles = new Array(9).fill('');
+
+    function hasWon() {
+        if (tiles[0] != '' && (
+            (tiles[0] === tiles[1] && tiles[0] === tiles[2]) || // Horizontal
+            (tiles[0] === tiles[4] && tiles[0] === tiles[8]) || // Diagonal
+            (tiles[0] === tiles[3] && tiles[0] === tiles[6]) // Vertical
+        )) {
+            return tiles[0];
+        }
+
+        if (tiles[1] != '' &&
+            (tiles[1] === tiles[4] && tiles[1] === tiles[7]) // Vertical
+        ) {
+            return tiles[1];
+        }
+
+        if (tiles[2] != '' && (
+            (tiles[2] === tiles[5] && tiles[2] === tiles[8]) || // Vertical
+            (tiles[2] === tiles[4] && tiles[2] === tiles[6]) // Diagonal
+        )) {
+            return tiles[2];
+        }
+
+        if (tiles[3] != '' && (
+            tiles[3] === tiles[4] && tiles[3] === tiles[5] // Horizontal
+        )) {
+            return tiles[3];
+        }
+
+        if (tiles[6] != '' && (
+            tiles[6] === tiles[7] && tiles[6] === tiles[8] // Horizontal
+        )) {
+            return tiles[6];
+        }
+
+        return null;
+    }
+
+    function setTile(index) {
+        // Game is over if someone has won
+        if (hasWinner) {
+            console.log('Game is over')
+            return;
+        }
+
+        const tile = tiles[index];
+
+        // Cannot fill a tile that already has a value
+        if (tile !== '') {
+            console.log(`Tile ${index} already has a value present.`);
+            return;
+        }
+
+        // Update tiles and display
+        tiles[index] = currentPlayer;
+        displayController.setTile(index, currentPlayer);
+
+        // Check if there is a winner
+        const winner = hasWon();
+        if (winner === null) {
+            // Update the current player, if no one has won yet
+            swapCurrentPlayer();
+        } else {
+            console.log(`${winner} is the new winner!`)
+            hasWinner = true;
+        }
+    }
+
+    function clearTiles() {
+        // reset winner
+        hasWinner = false;
+
+        // reset board and display tiles
+        tiles.fill('');
+        displayController.clearTiles();
+
+        console.log('The board is reset.');
+    }
+
+    return { clearTiles, setTile };
+})();
 
 const displayController = (() => {
-    let currentPlayer = 'X';
-
     // Tiles setup
     const tiles = [];
     for (let i = 0; i < 9; i++) {
@@ -10,89 +99,24 @@ const displayController = (() => {
         const tile = document.querySelector(`#_${i}`);
         tile.textContent = '';
         tile.addEventListener('click', () => {
-            // End game if someone has won
-            if (hasWinner) {
-                console.log('Game is over')
-                return;
-            }
-
-            let result = setTile(index);
-
-            if (result !== null) {
-                console.log(`${result} is the new winner!`)
-                hasWinner = true;
-            }
+            gameboard.setTile(index);
         });
 
         tiles.push(tile);
     }
 
-    function hasWon() {
-        if (tiles[0].textContent != '' && (
-            (tiles[0].textContent === tiles[1].textContent && tiles[0].textContent === tiles[2].textContent) || // Horizontal
-            (tiles[0].textContent === tiles[4].textContent && tiles[0].textContent === tiles[8].textContent) || // Diagonal
-            (tiles[0].textContent === tiles[3].textContent && tiles[0].textContent === tiles[6].textContent) // Vertical
-        )) {
-            return tiles[0].textContent;
-        }
-
-        if (tiles[1].textContent != '' &&
-            (tiles[1].textContent === tiles[4].textContent && tiles[1].textContent === tiles[7].textContent) // Vertical
-        ) {
-            return tiles[1].textContent;
-        }
-
-        if (tiles[2].textContent != '' && (
-            (tiles[2].textContent === tiles[5].textContent && tiles[2].textContent === tiles[8].textContent) || // Vertical
-            (tiles[2].textContent === tiles[4].textContent && tiles[2].textContent === tiles[6].textContent) // Diagonal
-        )) {
-            return tiles[2].textContent;
-        }
-
-        if (tiles[3].textContent != '' && (
-            tiles[3].textContent === tiles[4].textContent && tiles[3].textContent === tiles[5].textContent // Horizontal
-        )) {
-            return tiles[3].textContent;
-        }
-
-        if (tiles[6].textContent != '' && (
-            tiles[6].textContent === tiles[7].textContent && tiles[6].textContent === tiles[8].textContent // Horizontal
-        )) {
-            return tiles[6].textContent;
-        }
-
-        return null;
-    }
-
-    function setTile(index) {
+    function setTile(index, value) {
         const tile = tiles[index];
-        if (tile.textContent != '') {
-            console.log(`Tile ${index} already has a value present.`);
-            return null;
-        }
 
         // Update the tile
-        tile.textContent = currentPlayer;
-
-        const winner = hasWon();
-
-        if (winner === null) {
-            // Update the current player, if no one has won yet
-            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-        }
-
-        return winner;
+        tile.textContent = value;
     }
 
     function clearTiles() {
         for (const tile of tiles) {
             tile.textContent = '';
         }
-
-        hasWinner = false;
-
-        console.log('The board is reset.');
     }
 
-    return { clearTiles };
+    return { setTile, clearTiles };
 })();
