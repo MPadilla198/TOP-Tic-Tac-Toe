@@ -2,10 +2,12 @@
     --graphite: #474A51;
 }
 
+html {
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+}
+
 body {
     background-color: #EEEEEE;
-
-    font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
 h1 {
